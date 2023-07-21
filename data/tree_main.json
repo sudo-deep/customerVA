@@ -1,1 +1,1 @@
-{"name": "w", "children": [{"name": "create"}, {"name": "status"}, {"name": "quit"}]}
+{"name": "w", "children": [{"name": "create_ticket"}, {"name": "view_ticket_status"}, {"name": "quit"}]}
