@@ -1,5 +1,4 @@
 anytree
 pyttsx3
-speech_recognition
-platform
+speechrecognition
 csv
