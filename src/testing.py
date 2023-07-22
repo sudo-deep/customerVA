@@ -2,48 +2,49 @@ import json
 import pyttsx3
 import speech_recognition as sr
 import csv
-from anytree import Node
+from anytree import Node, RenderTree, search
+from anytree.importer import DictImporter
+from anytree.exporter import DictExporter
 
-class CustomerServiceNode(Node):
-    def __init__(self, name, parent=None):
-        super().__init__(name, parent=parent)
-
-    def __call__(self):
-        function_name = self.name.replace(" ", "_").lower() + "_function"
-        if function_name in globals() and callable(globals()[function_name]):
-            return globals()[function_name]()
-        else:
-            return "Invalid function."
 
 def speak(text):
-    engine = pyttsx3.init()
-    engine.say(text)
-    engine.runAndWait()
+    # engine = pyttsx3.init()
+    # engine.say(text)
+    # engine.runAndWait()
+    print(text)
 
 def get_user_input():
-    recognizer = sr.Recognizer()
-    with sr.Microphone() as source:
-        print("Please speak:")
-        recognizer.pause_threshold = 1
-        audio = recognizer.listen(source)
+    # recognizer = sr.Recognizer()
+    # with sr.Microphone() as source:
+    #     print("Please speak:")
+    #     recognizer.pause_threshold = 1
+    #     audio = recognizer.listen(source)
 
-    try:
-        user_input = recognizer.recognize_google(audio).lower()
-        print(f"You said: {user_input}")
-        return user_input
-    except sr.UnknownValueError:
-        print("Sorry, I couldn't understand you. Please try again.")
-        return get_user_input()
-    except sr.RequestError:
-        print("Sorry, there was an error accessing the Google Speech Recognition service.")
-        return get_user_input()
+    # try:
+    #     user_input = recognizer.recognize_google(audio).lower()
+    #     print(f"You said: {user_input}")
+    #     return user_input
+    # except sr.UnknownValueError:
+    #     print("Sorry, I couldn't understand you. Please try again.")
+    #     return get_user_input()
+    # except sr.RequestError:
+    #     print("Sorry, there was an error accessing the Google Speech Recognition service.")
+    #     return get_user_input()
+    return input()
 
-def build_tree_from_json(tree_data, parent=None):
-    node_name = tree_data["name"]
-    node = CustomerServiceNode(node_name, parent=parent)
 
-    for child_data in tree_data.get("children", []):
-        build_tree_from_json(child_data, parent=node)
+def build_tree_from_json(json_data):
+    importer = DictImporter(nodecls=Node)
+    customer_service_root = importer.import_(json_data)
+    return customer_service_root
+
+def export_tree_to_json(root_node):
+    exporter = DictExporter()
+    json_data = exporter.export(root_node)
+    return json_data
+
+def w_function():
+    speak("Welcome to the customer service")
 
 def create_ticket_function():
     speak("Please provide the ticket ID.")
@@ -97,26 +98,24 @@ if __name__ == "__main__":
     customer_service_root = build_tree_from_json(tree_data)
 
     current_node = customer_service_root
+    print(RenderTree(current_node))
+    next_node = customer_service_root
     while True:
-        speak(current_node.name)
+        globals()[next_node.name + "_function"]()
+        print(f"\nCurrent Node: {current_node.name}")
+        print("Choose the next node (or 'exit' to quit):")
+        print(f"Children of {current_node.name}: {[child.name for child in current_node.children]}")
+        next_node_value = input().strip()
 
-        if not current_node.children:
+        if next_node_value == 'exit':
             break
-
-        user_input = get_user_input()
-        if user_input == "go back":
-            if current_node == customer_service_root:
-                speak("You are already at the root.")
-            else:
-                current_node = current_node.parent
-        else:
-            found_child = None
-            for child in current_node.children:
-                if child.name.lower() in user_input:
-                    found_child = child
-                    break
-
-            if found_child:
-                current_node = found_child
-            else:
-                speak("Sorry, I didn't understand. Please try again.")
+        temp = search.find_by_attr(current_node, next_node_value)
+        # print(f"temp {temp}")
+        next_node = temp
+        
+        if next_node is None:
+            print("Node not found. Please try again.")
+            continue
+        elif next_node.is_leaf:
+            print("You have reached the end of the customer service. Thanks for contacting")
+            quit()
