@@ -14,7 +14,7 @@ from anytree import Node, RenderTree
 from anytree.exporter import DictExporter
 
 
-FILE_PATH = "/home/deepansh/Documents/Python Personal/customerVA/data/tree_main.json"
+FILE_PATH = "/home/deepansh/Documents/Python Personal/customerVA/tree.json"
 
 def build_tree():
     root_name = input("Enter the name of the root node: ")

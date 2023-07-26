@@ -22,6 +22,7 @@ class audio_utils():
         self.log_stream = log_stream
         self.rec = sr.Recognizer()
         self.OS_NAME = platform.system()
+        self.OUT_FILEPATH = "/home/deepansh/Documents/Python Personal/customerVA/temp/audio/out.mp3"
         pass
 
     @staticmethod
@@ -53,7 +54,7 @@ class audio_utils():
     def play_audio(self, text):
         if "linux" in self.OS_NAME.lower():
             tts = gTTS(text=text, lang="en")
-            tts.save("temp/audio/out.mp3")
+            tts.save(self.OUT_FILEPATH)
             os.system("mpg123 out.mp3")
         elif "windows" in self.OS_NAME.lower():
             tts = pyttsx3.init()

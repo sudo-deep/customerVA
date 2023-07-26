@@ -5,32 +5,45 @@ import csv
 from anytree import Node, RenderTree, search
 from anytree.importer import DictImporter
 from anytree.exporter import DictExporter
+from modules.audio_utils import audio_utils
 
+
+utils = audio_utils()
 
 def speak(text):
-    # engine = pyttsx3.init()
-    # engine.say(text)
-    # engine.runAndWait()
-    print(text)
+    utils.play_audio(text)
 
 def get_user_input():
-    # recognizer = sr.Recognizer()
-    # with sr.Microphone() as source:
-    #     print("Please speak:")
-    #     recognizer.pause_threshold = 1
-    #     audio = recognizer.listen(source)
+    resp = utils.get_speech()
+    if resp == -1:
+        speak("Service is unavailable, please try again later.")
+    return resp
 
-    # try:
-    #     user_input = recognizer.recognize_google(audio).lower()
-    #     print(f"You said: {user_input}")
-    #     return user_input
-    # except sr.UnknownValueError:
-    #     print("Sorry, I couldn't understand you. Please try again.")
-    #     return get_user_input()
-    # except sr.RequestError:
-    #     print("Sorry, there was an error accessing the Google Speech Recognition service.")
-    #     return get_user_input()
-    return input()
+
+# def speak(text):
+#     engine = pyttsx3.init()
+#     engine.say(text)
+#     engine.runAndWait()
+#     # print(text)
+
+# def get_user_input():
+#     recognizer = sr.Recognizer()
+#     with sr.Microphone() as source:
+#         print("Please speak:")
+#         recognizer.pause_threshold = 1
+#         audio = recognizer.listen(source)
+
+#     try:
+#         user_input = recognizer.recognize_google(audio).lower()
+#         print(f"You said: {user_input}")
+#         return user_input
+#     except sr.UnknownValueError:
+#         print("Sorry, I couldn't understand you. Please try again.")
+#         return get_user_input()
+#     except sr.RequestError:
+#         print("Sorry, there was an error accessing the Google Speech Recognition service.")
+#         return get_user_input()
+#     # return input()
 
 
 def build_tree_from_json(json_data):
@@ -98,13 +111,13 @@ if __name__ == "__main__":
     customer_service_root = build_tree_from_json(tree_data)
 
     current_node = customer_service_root
-    print(RenderTree(current_node))
+    # print(RenderTree(current_node))
     next_node = customer_service_root
     while True:
         globals()[next_node.name + "_function"]()
-        print(f"\nCurrent Node: {current_node.name}")
-        print("Choose the next node (or 'exit' to quit):")
-        print(f"Children of {current_node.name}: {[child.name for child in current_node.children]}")
+        # print(f"\nCurrent Node: {current_node.name}")
+        # print("Choose the next node (or 'exit' to quit):")
+        print(f"options: {[child.name for child in current_node.children]}")
         next_node_value = input().strip()
 
         if next_node_value == 'exit':
@@ -116,6 +129,6 @@ if __name__ == "__main__":
         if next_node is None:
             print("Node not found. Please try again.")
             continue
-        elif next_node.is_leaf:
-            print("You have reached the end of the customer service. Thanks for contacting")
-            quit()
+        # elif next_node.is_leaf:
+        #     print("You have reached the end of the customer service. Thanks for contacting")
+            # quit()
