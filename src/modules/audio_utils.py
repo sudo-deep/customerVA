@@ -22,17 +22,17 @@ class audio_utils():
         self.log_stream = log_stream
         self.rec = sr.Recognizer()
         self.OS_NAME = platform.system()
-        self.OUT_FILEPATH = "/home/deepansh/Documents/Python Personal/customerVA/temp/audio/out.mp3"
+        self.OUT_FILEPATH = "temp/audio/out.mp3"
         pass
 
-    @staticmethod
+    # @staticmethod
     def log(self, record):
         if self.log_stream:
             print(record)
 
 
-    def get_speech(self, mode="m"):
-        with sr.Microphone() as src:
+    def get_speech(self, mode="m", dev=None):
+        with sr.Microphone(dev) as src:
     
             if mode == "m":
                 self.rec.adjust_for_ambient_noise(src)
@@ -55,7 +55,7 @@ class audio_utils():
         if "linux" in self.OS_NAME.lower():
             tts = gTTS(text=text, lang="en")
             tts.save(self.OUT_FILEPATH)
-            os.system("mpg123 out.mp3")
+            os.system(f"mpg123 {self.OUT_FILEPATH}")
         elif "windows" in self.OS_NAME.lower():
             tts = pyttsx3.init()
             tts.setProperty("rate", 150)

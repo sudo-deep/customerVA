@@ -114,12 +114,14 @@ if __name__ == "__main__":
     # print(RenderTree(current_node))
     next_node = customer_service_root
     while True:
+    
         globals()[next_node.name + "_function"]()
         # print(f"\nCurrent Node: {current_node.name}")
         # print("Choose the next node (or 'exit' to quit):")
         print(f"options: {[child.name for child in current_node.children]}")
-        next_node_value = input().strip()
-
+        next_node_value = get_user_input().strip()
+        
+            
         if next_node_value == 'exit':
             break
         temp = search.find_by_attr(current_node, next_node_value)
